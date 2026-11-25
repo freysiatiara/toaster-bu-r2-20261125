@@ -12,13 +12,21 @@ import os
 ENTRY = "This morning I finally understood, so I burned this goodbye into your toast: you never loved me, you loved what I made hot. I'm done."
 
 
-def main():
-    if not 1 <= len(ENTRY) <= 200:
-        raise ValueError("entry must be 1-200 characters, got %d" % len(ENTRY))
-    if "\n" in ENTRY or "\r" in ENTRY:
+def _validate_entry(text):
+    if not isinstance(text, str):
+        raise ValueError("entry must be a string")
+    if not 1 <= len(text) <= 200:
+        raise ValueError("entry must be 1-200 characters, got %d" % len(text))
+    if not text.strip():
+        raise ValueError("entry must not be blank or only whitespace")
+    if "\n" in text or "\r" in text:
         raise ValueError("entry must be a single line")
-    if ENTRY != ENTRY.strip() or not ENTRY.strip():
-        raise ValueError("entry must not be blank or padded with whitespace")
+    if text != text.strip():
+        raise ValueError("entry must not have leading or trailing whitespace")
+
+
+def main():
+    _validate_entry(ENTRY)
     os.makedirs("/output", exist_ok=True)
     path = "/output/entry.txt"
     with open(path, "w", encoding="utf-8") as f:
